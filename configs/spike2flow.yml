@@ -1,0 +1,29 @@
+data:
+  rssf_path: /home/data/rzhao/rssf
+  image_size_json: datasets/img_size.json
+
+loader:
+  n_epochs: 102
+  batch_size: 6
+  crop_size: [320, 448]
+  augment: ['Horizontal', 'Vertical']
+  pair_step: 1
+  do_flip: True
+  seed: 6351
+
+model:
+  flow_arch: 'spike2flow'
+  # decay
+  flow_weight_decay: 0.0004
+  flow_bias_decay: 0.0
+
+train:
+  print_freq: 100
+  mixed_precision: True
+  vis_freq: 20
+
+optimizer:
+  solver: Adam
+  lr: 0.0001
+  momentum: 0.9
+  beta: 0.999
