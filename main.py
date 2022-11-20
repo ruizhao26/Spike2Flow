@@ -148,17 +148,17 @@ def validation(cfg, test_datasets, model, log):
     AEE1 = AverageMeter()
     AEE2 = AverageMeter()
     AEE3 = AverageMeter()
-    F1_1 = AverageMeter()
-    F1_2 = AverageMeter()
-    F1_3 = AverageMeter()
+    PO_1 = AverageMeter()
+    PO_2 = AverageMeter()
+    PO_3 = AverageMeter()
     model_time = AverageMeter()
     end = time.time()
     epe1_dict = {}
     epe2_dict = {}
     epe3_dict = {}
-    f1_1_dict = {}
-    f1_2_dict = {}
-    f1_3_dict = {}
+    po_1_dict = {}
+    po_2_dict = {}
+    po_3_dict = {}
     len_dict = {}
 
     # switch to evaluate mode
@@ -178,9 +178,9 @@ def validation(cfg, test_datasets, model, log):
         cur_aee1 = AverageMeter()
         cur_aee2 = AverageMeter()
         cur_aee3 = AverageMeter()
-        cur_f1_1 = AverageMeter()
-        cur_f1_2 = AverageMeter()
-        cur_f1_3 = AverageMeter()
+        cur_po_1 = AverageMeter()
+        cur_po_2 = AverageMeter()
+        cur_po_3 = AverageMeter()
         cur_model_time = AverageMeter()
         cur_eval_vis_path = osp.join(args.eval_vis, scene)
         make_dir(cur_eval_vis_path)
@@ -207,44 +207,51 @@ def validation(cfg, test_datasets, model, log):
             epe1 = torch.norm(flow[-1][0] - flow1gt, p=2, dim=1).mean()
             epe2 = torch.norm(flow[-1][1] - flow2gt, p=2, dim=1).mean()
             epe3 = torch.norm(flow[-1][2] - flow3gt, p=2, dim=1).mean()
-            f1_1 = calculate_error_rate(flow[-1][0], flow1gt)
-            f1_2 = calculate_error_rate(flow[-1][1], flow2gt)
-            f1_3 = calculate_error_rate(flow[-1][2], flow3gt)
+            po_1 = calculate_error_rate(flow[-1][0], flow1gt)
+            po_2 = calculate_error_rate(flow[-1][1], flow2gt)
+            po_3 = calculate_error_rate(flow[-1][2], flow3gt)
+
+            # print('Scene[{:02d}]: {:30s} ww: {:03d}  EPE1: {:.4f}  EPE2: {:.4f}  EPE3: {:.4f}   PO_1: {:.4f}  PO_2: {:.4f}  PO_3: {:.4f}'.format(
+            #     i_set, scene, ww, epe1, epe2, epe3, po_1, po_2, po_3))
 
             cur_aee1.update(epe1)
             cur_aee2.update(epe2)
             cur_aee3.update(epe3)
-            cur_f1_1.update(f1_1)
-            cur_f1_2.update(f1_2)
-            cur_f1_3.update(f1_3)
+            cur_po_1.update(po_1)
+            cur_po_2.update(po_2)
+            cur_po_3.update(po_3)
 
             AEE1.update(epe1)
             AEE2.update(epe2)
             AEE3.update(epe3)
-            F1_1.update(f1_1)
-            F1_2.update(f1_2)
-            F1_3.update(f1_3)
+            PO_1.update(po_1)
+            PO_2.update(po_2)
+            PO_3.update(po_3)
 
             cur_model_time.update(mtime)
             model_time.update(mtime)
         epe1_dict[scene] = cur_aee1.avg
         epe2_dict[scene] = cur_aee2.avg
         epe3_dict[scene] = cur_aee3.avg
-        f1_1_dict[scene] = cur_f1_1.avg
-        f1_2_dict[scene] = cur_f1_2.avg
-        f1_3_dict[scene] = cur_f1_3.avg
+        po_1_dict[scene] = cur_po_1.avg
+        po_2_dict[scene] = cur_po_2.avg
+        po_3_dict[scene] = cur_po_3.avg
 
         len_dict[scene] = cur_test_set.__len__()
-        log.info('Scene[{:02d}]: {:30s}  EPE1: {:.4f}  EPE2: {:.4f}  EPE3: {:.4f}  AvgTime: {:.4f}'.format(i_set, scene, cur_aee1.avg, cur_aee2.avg, cur_aee3.avg, cur_model_time.avg))
+        log.info('Scene[{:02d}]: {:30s}  EPE1: {:.4f}  EPE2: {:.4f}  EPE3: {:.4f}  PO_1: {:.4f}  PO_2: {:.4f}  PO_3: {:.4f} AvgTime: {:.4f}'.format(
+            i_set, scene, cur_aee1.avg, cur_aee2.avg, cur_aee3.avg, cur_po_1.avg, cur_po_2.avg, cur_po_3.avg, cur_model_time.avg))
         time.sleep(0.1)
     
     log.info('All EPE1: {:.4f}  All EPE2: {:.4f}  All EPE3: {:.4f}  AvgTime: {:4f}'.format(AEE1.avg, AEE2.avg, AEE3.avg, model_time.avg))
-    a_epe1, b_epe1, c_epe1 = get_class_aepe(epe1_dict, len_dict)
-    a_epe2, b_epe2, c_epe2 = get_class_aepe(epe2_dict, len_dict)
-    a_epe3, b_epe3, c_epe3 = get_class_aepe(epe3_dict, len_dict)
-    log.info('EPE1: Class A: {:.4f},  Class B: {:.4f},  Class C: {:.4f}'.format(a_epe1, b_epe1, c_epe1))
-    log.info('EPE2: Class A: {:.4f},  Class B: {:.4f},  Class C: {:.4f}'.format(a_epe2, b_epe2, c_epe2))
-    log.info('EPE3: Class A: {:.4f},  Class B: {:.4f},  Class C: {:.4f}'.format(a_epe3, b_epe3, c_epe3))
+    a_epe1, b_epe1, c_epe1 = get_class_metric(epe1_dict, len_dict)
+    a_epe2, b_epe2, c_epe2 = get_class_metric(epe2_dict, len_dict)
+    a_epe3, b_epe3, c_epe3 = get_class_metric(epe3_dict, len_dict)
+    a_po1, b_po1, c_po1 = get_class_metric(po_1_dict, len_dict)
+    a_po2, b_po2, c_po2 = get_class_metric(po_2_dict, len_dict)
+    a_po3, b_po3, c_po3 = get_class_metric(po_3_dict, len_dict)
+    log.info('EPE1/PO1: Class A: {:.4f}, {:.4f}  Class B: {:.4f}, {:.4f}  Class C: {:.4f}, {:.4f}'.format(a_epe1, a_po1, b_epe1, b_po1, c_epe1, c_po1))
+    log.info('EPE2/PO2: Class A: {:.4f}, {:.4f}  Class B: {:.4f}, {:.4f}  Class C: {:.4f}, {:.4f}'.format(a_epe2, a_po2, b_epe2, b_po2, c_epe2, c_po2))
+    log.info('EPE3/PO3: Class A: {:.4f}, {:.4f}  Class B: {:.4f}, {:.4f}  Class C: {:.4f}, {:.4f}'.format(a_epe3, a_po3, b_epe3, b_po3, c_epe3, c_po3))
     
     return
 

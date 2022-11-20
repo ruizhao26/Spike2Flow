@@ -79,7 +79,7 @@ def supervised_loss(flow, flow_gt, gamma=0.8):
 ##########################################################################################################
 ## Compute Error
 
-def get_class_aepe(epe_dict, len_dict):
+def get_class_metric(metric_dict, len_dict):
     CLASS_A = [
         '2016-09-02_000170',
         'car_tuebingen_000024',
@@ -95,24 +95,24 @@ def get_class_aepe(epe_dict, len_dict):
         'horses__000028',
         'tubingen_05_09_000012']
     
-    a_epe_sum = 0
-    b_epe_sum = 0
-    c_epe_sum = 0
+    a_metric_sum = 0
+    b_metric_sum = 0
+    c_metric_sum = 0
     a_len_sum = 0
     b_len_sum = 0
     c_len_sum = 0
-    for k, v in epe_dict.items():
+    for k, v in metric_dict.items():
         if k in CLASS_A:
-            a_epe_sum += v * len_dict[k]
+            a_metric_sum += v * len_dict[k]
             a_len_sum += len_dict[k]
         elif k in CLASS_B:
-            b_epe_sum += v * len_dict[k]
+            b_metric_sum += v * len_dict[k]
             b_len_sum += len_dict[k]
         elif k in CLASS_C:
-            c_epe_sum += v * len_dict[k]
+            c_metric_sum += v * len_dict[k]
             c_len_sum += len_dict[k]
     
-    return a_epe_sum/a_len_sum, b_epe_sum/b_len_sum, c_epe_sum/c_len_sum
+    return a_metric_sum/a_len_sum, b_metric_sum/b_len_sum, c_metric_sum/c_len_sum
 
 
 def calculate_error_rate(pred_flow, gt_flow):
