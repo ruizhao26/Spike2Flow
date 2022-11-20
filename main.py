@@ -242,7 +242,8 @@ def validation(cfg, test_datasets, model, log):
             i_set, scene, cur_aee1.avg, cur_aee2.avg, cur_aee3.avg, cur_po_1.avg, cur_po_2.avg, cur_po_3.avg, cur_model_time.avg))
         time.sleep(0.1)
     
-    log.info('All EPE1: {:.4f}  All EPE2: {:.4f}  All EPE3: {:.4f}  AvgTime: {:4f}'.format(AEE1.avg, AEE2.avg, AEE3.avg, model_time.avg))
+    log.info('All EPE1/PO1: {:.4f}/{:.4f}  All EPE2/PO2: {:.4f}/{:.4f}  All EPE3/PO3: {:.4f}/{:.4f}  AvgTime: {:.4f}'.format(
+        AEE1.avg, PO_1.avg, AEE2.avg, PO_2.avg, AEE3.avg, PO_3.avg, model_time.avg))
     a_epe1, b_epe1, c_epe1 = get_class_metric(epe1_dict, len_dict)
     a_epe2, b_epe2, c_epe2 = get_class_metric(epe2_dict, len_dict)
     a_epe3, b_epe3, c_epe3 = get_class_metric(epe3_dict, len_dict)
