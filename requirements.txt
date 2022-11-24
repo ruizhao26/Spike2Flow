@@ -2,9 +2,7 @@ torch
 opencv-python
 numpy
 tensorboardX
-pprint
 easydict
-logging
 scipy
 einops
 h5py
